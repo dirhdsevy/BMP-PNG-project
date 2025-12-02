@@ -1,0 +1,6 @@
+run_c
+run_cpp
+run_cross
+*.o
+*.bmp
+.DS_Store
