@@ -1,3 +1,10 @@
+/* File: 18_cross_test.cpp
+   Task: 18 (BMP/PNG)
+   Cross-verification test between C and C++ output
+   Done by: [ВАШЕ ПРІЗВИЩЕ] (Group [ВАША ГРУПА])
+   Date: 05.12.2025
+*/
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -25,12 +32,14 @@ int main()
 {
   std::cout << "Running Cross-Test...\n";
 
+  // C implementation
   Image *c_img = create_image(100, 100);
   Pixel p = {255, 0, 0};
   draw_rect(c_img, 10, 10, 50, 50, p);
   save_bmp(c_img, "test_c.bmp");
   free_image(c_img);
 
+  // C++ implementation
   BmpImage cpp_img(100, 100);
   Color c = {255, 0, 0};
   cpp_img.drawRect(10, 10, 50, 50, c);
