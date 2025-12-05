@@ -1,9 +1,9 @@
-/* File: Image.h
-   Task: 18 (BMP/PNG)
-   Class definition for BMP Image
-   Done by: [ВАШЕ ПРІЗВИЩЕ] (Group [ВАША ГРУПА])
-   Date: 05.12.2025
-*/
+/*
+ * Task: 18 (BMP/PNG)
+ * Student: [Ваше Прізвище]
+ * File: Image.h
+ * Description: C++ Class wrapper for BMP operations
+ */
 
 #ifndef IMAGE_CLASS_H
 #define IMAGE_CLASS_H
@@ -26,26 +26,27 @@ private:
     std::vector<Color> pixels;
 
 public:
-    /* Constructor */
     BmpImage(int w, int h);
 
-    /* Fill image with color */
+    // Core
     void clear(Color c);
-
-    /* Set single pixel */
     void setPixel(int x, int y, Color c);
+    Color getPixel(int x, int y) const;
 
-    /* Draw rectangle */
+    // Drawing
     void drawRect(int x, int y, int w, int h, Color c);
-
-    /* Draw circle */
     void drawCircle(int xc, int yc, int r, Color c);
 
-    /* Save to file */
+    // I/O
     bool save(const std::string &filename) const;
+    bool load(const std::string &filename);
 
-    /* Display image info to console */
+    // Visualization
     void displayInfo() const;
+    void displayAscii() const;
+
+    // PNG Stub
+    bool savePng(const std::string &filename) const;
 };
 
 #endif

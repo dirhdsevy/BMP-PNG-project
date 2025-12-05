@@ -1,17 +1,15 @@
-/* File: 18_test.c
-   Task: 18 (BMP/PNG)
-   Test driver for C implementation
-   Done by: [ВАШЕ ПРІЗВИЩЕ] (Group [ВАША ГРУПА])
-   Date: 05.12.2025
-*/
+/*
+ * Task: 18 (BMP/PNG)
+ * Test Driver (C)
+ * Student: [Ваше Прізвище]
+ */
 
 #include "18.h"
 
 void process_input(FILE *in, Image *img)
 {
     char cmd[16];
-    int x, y, w, h, r;
-    int R, G, B;
+    int x, y, w, h, r, R, G, B;
 
     while (fscanf(in, "%s", cmd) != EOF)
     {
@@ -21,7 +19,7 @@ void process_input(FILE *in, Image *img)
             {
                 Pixel p = {(uint8_t)B, (uint8_t)G, (uint8_t)R};
                 draw_rect(img, x, y, w, h, p);
-                printf("Processed: RECT %d %d %d %d\n", x, y, w, h);
+                printf("  -> Drawn RECT at %d,%d\n", x, y);
             }
         }
         else if (strcmp(cmd, "CIRCLE") == 0)
@@ -30,7 +28,7 @@ void process_input(FILE *in, Image *img)
             {
                 Pixel p = {(uint8_t)B, (uint8_t)G, (uint8_t)R};
                 draw_circle(img, x, y, r, p);
-                printf("Processed: CIRCLE %d %d r=%d\n", x, y, r);
+                printf("  -> Drawn CIRCLE at %d,%d\n", x, y);
             }
         }
     }
@@ -39,51 +37,73 @@ void process_input(FILE *in, Image *img)
 int main()
 {
     int mode;
-    printf("Task 18 Test Driver (C Version)\n");
-    printf("1. Console Input\n2. File Input (18_test.dat)\nChoose: ");
+    printf("\n=== BMP Toolkit Test (C) ===\n");
+    printf("1. Generate New Image (Console/File)\n");
+    printf("2. Modify Existing BMP\n");
+    printf("3. Test ASCII View\n");
+    printf("> ");
     if (scanf("%d", &mode) != 1)
         return 1;
 
-    Image *img = create_image(800, 600);
-    if (!img)
-    {
-        printf("Memory error\n");
-        return 1;
-    }
-
-    /* FIX: Fill background with WHITE color instead of black */
-    Pixel white = {255, 255, 255};
-    clear_image(img, white);
+    Image *img = NULL;
 
     if (mode == 1)
     {
-        printf("Enter commands (e.g., RECT x y w h r g b). Ctrl+D to stop.\n");
-        process_input(stdin, img);
-    }
-    else
-    {
-        FILE *f = fopen("18_test.dat", "r");
-        if (f)
+        img = create_image(800, 600);
+        clear_image(img, (Pixel){255, 255, 255});
+
+        printf("Use file input? (0-No, 1-Yes): ");
+        int use_file;
+        scanf("%d", &use_file);
+
+        if (use_file)
         {
-            process_input(f, img);
-            fclose(f);
+            FILE *f = fopen("18_test.dat", "r");
+            if (f)
+            {
+                process_input(f, img);
+                fclose(f);
+            }
+            else
+                printf("Error: 18_test.dat missing.\n");
         }
         else
         {
-            printf("Error: 18_test.dat not found!\n");
+            printf("Enter commands (e.g. CIRCLE 400 300 100 0 0 255). Ctrl+D to stop.\n");
+            process_input(stdin, img);
+        }
+
+        save_bmp(img, "output_c.bmp");
+        printf("Saved to output_c.bmp\n");
+    }
+    else if (mode == 2)
+    {
+        printf("Enter filename to load: ");
+        char fname[100];
+        scanf("%s", fname);
+        img = read_bmp(fname);
+        if (img)
+        {
+            printf("Loaded successfully. Drawing a black circle at 50,50.\n");
+            draw_circle(img, 50, 50, 30, (Pixel){0, 0, 0});
+            save_bmp(img, "modified_c.bmp");
+            printf("Saved to modified_c.bmp\n");
+        }
+        else
+        {
+            printf("Failed to load.\n");
         }
     }
-
-    if (save_bmp(img, "output_c.bmp"))
+    else if (mode == 3)
     {
-        printf("Saved to output_c.bmp\n");
-        print_file_info("output_c.bmp");
-    }
-    else
-    {
-        printf("Error saving file\n");
+        // Create small image for ASCII test
+        img = create_image(40, 20);
+        clear_image(img, (Pixel){0, 0, 0});                   // Black background
+        draw_rect(img, 5, 5, 30, 10, (Pixel){255, 255, 255}); // White rect
+        print_ascii_art(img);
     }
 
-    free_image(img);
+    if (img)
+        free_image(img);
     return 0;
 }
